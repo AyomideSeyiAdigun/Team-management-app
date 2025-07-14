@@ -1,36 +1,171 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ 
 
-## Getting Started
+````markdown
+# 🧑‍💼 Multi-Tenant Team Management Platform (Frontend Only)
 
-First, run the development server:
+This is a **frontend-only** multi-tenant **Team Management Platform** built with:
+
+- ✅ Next.js (App Router)
+- 🎨 Tailwind CSS (Dark theme supported)
+- 🧠 Zustand (State management)
+- 🗂 localStorage (as mock backend)
+- 🔐 Fully dynamic roles & permissions per organization
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to **run the app locally**:
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/ayomideadigun2014/team-management-app.git
+cd team-management-app
+````
+
+### 2. Install dependencies
+
+Ensure you have **Node.js ≥ 16.x** and **npm ≥ 8.x** installed.
+
+```bash
+npm install
+```
+
+### 3. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open your browser and visit:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You will be redirected to the user login page by default.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🧪 Super Admin Access
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To access the **Super Admin panel**, go to:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+http://localhost:3000/admin/login
+```
 
-## Deploy on Vercel
+You can use this default login (created automatically on first load):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```json
+{
+   "email": "superadmin@app.com",
+    "password": "password",
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📁 Folder Structure
+
+```
+src/
+│
+├── app/                # App routes (Next.js App Router)
+│   ├── login/          # User login
+│   ├── signup/         # User sign-up
+│   ├── create-workspace/
+│   ├── select-organization/
+│   ├── organization/  # Super normal user (dashboard, users, orgs)
+│   ├── user
+│   └── admin-panel/          # Super admin panel (dashboard, users, orgs)
+│
+├── components/         # Reusable UI (Navbar, Sidebar, Modals)
+├── stores/             # Zustand stores (authStore, roleStore, auditStore, etc.)
+├── utils/              #
+└── libs/             # auth.tsx, permission.tsx
+```
+
+---
+
+## 🧠 Features
+
+* 🔐 **Frontend-only Auth** with encrypted passwords
+* 🏢 **Multi-organization system** with dynamic role-permission control
+* 👤 **User management** (invite, assign role, edit)
+* 🛡 **Permission-based route & UI protection**
+* 🧩 **Custom roles & permissions per org**
+* 📜 **Audit logging** (create/edit/delete actions)
+* 👥 **Teams management** (assign members, edit teams)
+* 👨‍💼 **Super Admin Panel** with full org/user/team/audit access
+
+---
+
+## 📦 Example Permissions
+
+| Permission             | Description                   |
+| ---------------------- | ----------------------------- |
+| `view_users`           | View users in an organization |
+| `manage_users`         | Invite/edit/delete users      |
+| `view_teams`           | View teams                    |
+| `manage_teams`         | Create/edit/delete teams      |
+| `view_roles`           | View roles                    |
+| `manage_roles`         | Create/edit/delete roles      |
+| `view_audit_trail`     | View audit log                |
+| `manage_organizations` | Only for Super Admin          |
+
+---
+
+## 🗂 LocalStorage Keys
+
+| Key                | Purpose                       |
+| ------------------ | ----------------------------- |
+| `users`            | All registered users          |
+| `userInvites`      | Emails of invited users       |
+| `roles_<orgId>`    | Role list for an organization |
+| `teams_<orgId>`    | Team list for an organization |
+| `audit_<orgId>`    | Audit logs per organization   |
+| `auditLogs`        | Super Admin logs              |
+| `organizations`    | List of all organizations     |
+| `super_admin_user` | Super Admin data              |
+
+---
+
+## 💡 Tips
+
+* You can sign up with any email to create a new organization.
+* Invited users will skip workspace setup and be added to the org that invited them.
+* Super Admin can:
+
+  * Change org admins
+  * Delete organizations
+  * See all audit logs
+
+---
+
+## 🖥 Deployment
+
+You can deploy this frontend app easily with:
+
+* [Vercel](https://vercel.com/)
+* [Netlify](https://netlify.com/)
+* [Static Hosting](https://pages.github.com/)
+
+> ⚠ Note: This app is frontend-only and stores all data in localStorage. **Do not use for production** without integrating a backend!
+
+---
+
+## 📄 License
+
+MIT © 2025 Ayomide Adigun
+
+```
+
+---
+
+Let me know if you’d like:
+- A PDF version
+- Sample screenshots
+- Vercel deployment setup
+```
