@@ -39,6 +39,7 @@ const otherOrgs = currentUser?.memberships
     if (membership) {
       setActiveOrg(membership);
       setOrgDropdownOpen(false);
+      useAuthStore.getState().setActiveOrg(membership);
       router.refresh(); // or push to /dashboard
     }
   };

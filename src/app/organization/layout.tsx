@@ -1,12 +1,21 @@
 "use client";
-import Sidebar from "@/components/dashboard/sidebar";
 import DashboardNavbar from "@/components/dashboard/navbar";
+import Sidebar from "@/components/dashboard/sidebar";
+import { useEffect } from "react";
+import { useAuthStore } from "../../stores/authStore";
 
 export default function OrganizationLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+    const loadActiveOrg = useAuthStore((s) => s.loadActiveOrg);
+
+  useEffect(() => {
+    loadActiveOrg();
+  }, []);
+
   return (
     <div className="flex">
       <Sidebar />

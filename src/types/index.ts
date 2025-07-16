@@ -19,6 +19,7 @@ export interface User {
   status?: "active" | "pending"; // optional for user status
   isSuperAdmin?: boolean; // optional for super admin users,
   role?: string; // optional for role display
+    orgId?: string;
 }
 
 export interface SuperAdmin{
@@ -37,7 +38,7 @@ export interface SuperAdmin{
         email: string;
         orgId?: string;
         role?: string;
-        id?: string;
+        id: string;
         firstName: string;
         lastName: string;
         password: string;

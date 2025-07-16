@@ -5,7 +5,7 @@ import { useAuthStore } from "./authStore";
 
 interface UserStore {
   users: User[];
-  setUsers: (users: User[]) => void;
+  setUsers: (users:User[]) => void;
   loadUsers: () => void;
   updateUser: (updatedUser: User) => void;
 }

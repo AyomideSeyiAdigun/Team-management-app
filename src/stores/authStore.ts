@@ -18,6 +18,7 @@ type AuthStore = {
   selectOrg: (orgId: string) => void;
    setCurrentUser: (user: User) => void;
   setActiveOrg: (org: Membership) => void;
+    loadActiveOrg: () => void;
 };
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -59,6 +60,7 @@ login: (email, password) => {
   logout: () => {
     localStorage.removeItem("user");
     localStorage.removeItem("activeOrg");
+
     set({ currentUser: null, activeOrg: null });
   },
 
@@ -98,5 +100,16 @@ login: (email, password) => {
     set({ activeOrg: membership });
   },
    setCurrentUser: (user: User) => set({ currentUser: user }),
-  setActiveOrg: (org) => set({ activeOrg: org }),
+  // setActiveOrg: (org) => set({ activeOrg: org }),
+    setActiveOrg: (org) => {
+    localStorage.setItem("activeOrg", JSON.stringify(org));
+    set({ activeOrg: org });
+  },
+  loadActiveOrg: () => {
+    const stored = localStorage.getItem("activeOrg");
+    if (stored) {
+      set({ activeOrg: JSON.parse(stored) });
+    }
+  }
+
 }));

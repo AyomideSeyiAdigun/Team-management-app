@@ -2,7 +2,7 @@
 import { useAuditStore } from "@/stores/auditStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
-import type { CombinedUser, UserInvite } from "@/types";
+import type { User, UserInvite } from "@/types";
 import { Membership, Role } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 export default function UserTable({
   users,
 }: {
-  users: CombinedUser[];
+  users: User[];
 }) {
   const { currentUser, activeOrg } = useAuthStore();
   const orgId = activeOrg?.orgId;
@@ -24,12 +24,12 @@ export default function UserTable({
   }, [orgId,rolesKey]);
 
 
-   const getUserStatus = (user: CombinedUser) => {
+   const getUserStatus = (user: User) => {
     if (!user) return "unknown";
-    if ("memberships" in user && user.memberships.length > 0) {
+    
     const isSignedUp = user.firstName || user.lastName;
     return isSignedUp ? "active" : "pending";
-    }
+ 
   };
 
   const handleRoleChange = (email: string, newRole: string) => {
@@ -39,9 +39,9 @@ export default function UserTable({
     }
 
   // Step 2: Map through users and update role if email + org match
-  const updatedUsers:CombinedUser[] = users.map((user: CombinedUser) => {
+  const updatedUsers:User[] = users.map((user: User) => {
 
-    if (user.email === email && user.status!== "pending" &&  "memberships" in user) {
+    if (user.email === email && user.status!== "pending") {
       
       const updatedMemberships = user.memberships?.map((membership: Membership) => {
         if (membership.role === "Org Admin" || newRole === "Org Admin") {
@@ -94,7 +94,7 @@ export default function UserTable({
       alert("You do not have permission to change user roles.");
       return;
     }
-    const user:CombinedUser|undefined = users.find((u) => u.email === email);
+    const user:User|undefined = users.find((u) => u.email === email);
     if (!user) {
       alert("User not found.");
       return;
@@ -108,7 +108,7 @@ export default function UserTable({
       window.location.reload();
       return;
     }
-    if ("memberships" in user){
+ 
 
  
 
@@ -120,8 +120,8 @@ export default function UserTable({
     
     // const filtered = users.filter((u) => u.email !== email);
 
-const updatedGlobalUsers:CombinedUser[] = users.map((u: CombinedUser) => {
-  if (u.email === email && "memberships" in u) {
+const updatedGlobalUsers:User[] = users.map((u: User) => {
+  if (u.email === email ) {
     return {
       ...u,
       memberships: ( u.memberships || []).filter((m: Membership) => m.orgId !== orgId),
@@ -130,12 +130,7 @@ const updatedGlobalUsers:CombinedUser[] = users.map((u: CombinedUser) => {
   return u;
 });
 
- 
     useUserStore.getState().setUsers(updatedGlobalUsers);
- 
-
-
-
 
      useAuditStore.getState().addLog({
       actor: currentUser?.email || "unknown",
@@ -145,7 +140,7 @@ const updatedGlobalUsers:CombinedUser[] = users.map((u: CombinedUser) => {
       timestamp: new Date().toISOString(),
     });
     router.refresh();
-       }
+       
   };
 
   return (
@@ -160,19 +155,19 @@ const updatedGlobalUsers:CombinedUser[] = users.map((u: CombinedUser) => {
         </tr>
       </thead>
       <tbody>
-        {users.map((user:CombinedUser) =>{
+        {users.map((user:User) =>{
 
-  const membership =  "memberships" in user && user?.memberships?.find(
+  const membership =   user?.memberships?.find(
     (m: Membership) => m.orgId === orgId
   );
   
-  const roleNow = membership ? membership?.role : "N/A";
+  const roleNow = membership?.role || "N/A";
   const displayRole = formatRole(roleNow); 
         return(
           
           <tr key={user.email} className="border-b dark:border-gray-600">
             <td className="p-3">
-              {"memberships" in user&& user.firstName || "-"} {"memberships" in user&&user.lastName || "-"}
+              {user.firstName || "-"} {user.lastName || "-"}
             </td>
             <td className="p-3">{user.email}</td>
             <td className="p-3">

@@ -6,7 +6,7 @@ import { useAuditStore } from "@/stores/auditStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRoleStore } from "@/stores/roleStore";
 import { useUserStore } from "@/stores/userStore";
-import type { CombinedUser, Role, UserInvite } from "@/types";
+import type { Role, User, UserInvite } from "@/types";
  
 import { useEffect, useState } from "react";
 
@@ -23,7 +23,7 @@ const orgId = activeOrg?.orgId;
   const loadUsers = useUserStore((state) => state.loadUsers);
      const roles = useRoleStore((state) => state.roles);
     const loadRoles = useRoleStore((state) => state.loadRoles);
-    const [combineUsers, setCombineUsers] = useState< CombinedUser[]>([]);
+    const [combineUsers, setCombineUsers] = useState< User[]>([]);
 useEffect(() => { 
  loadRoles();
  loadUsers();
@@ -32,11 +32,18 @@ useEffect(() => {
 const orgInvites:UserInvite[] = invites.filter((invite: UserInvite) => invite.orgId === orgId);
 
 // Convert to placeholder user objects
-const invitedUsers = orgInvites.map((invite: UserInvite) => ({
+const invitedUsers:User[] = orgInvites.map((invite: UserInvite) => ({
   email: invite.email,
   role: "pending",
   status: "pending",
   orgId,
+  id: invite.email, // Use email as a unique ID for simplicity
+  firstName: "", // Placeholder
+  lastName: "", // Placeholder
+  memberships: []  , // Empty memberships
+  password: '', // encrypted
+
+  // Add any other fields you need to match User type
 }));
 
 
@@ -63,7 +70,7 @@ const invite = {
     if (!alreadyInvited) {
       invites.push(invite);
       localStorage.setItem("userInvites", JSON.stringify(invites));
-      setCombineUsers((prev) => [...prev, { email, role: "pending", status: "pending" }]);
+      setCombineUsers((prev) => [...prev, { email, role: "pending", status: "pending" , orgId, id: invite.email, firstName: "", lastName: "", memberships: [] ,password: '',}]);
     }
      // log it
    useAuditStore.getState().addLog({
@@ -75,9 +82,12 @@ const invite = {
   });
   };
 
-const filteredUsers :CombinedUser[] = filter
-  ? combineUsers.filter((u:CombinedUser) => u.role === filter)
+const filteredUsers :User[] = filter
+  ? combineUsers.filter((u:User) => u.role === filter)
   : combineUsers;
+
+  console.log(filteredUsers,'.....sjl');
+  
 
   return (
             <UserPermissionGuard requiredPermissions={["view_users"]}>
