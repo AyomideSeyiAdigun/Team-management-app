@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { useOrganizationStore } from "../../stores/organizationStore";
-import { useUserStore } from "../../stores/userStore";
 
 export default function CreateWorkspacePage() {
   const [form, setForm] = useState({ name: "", address: "" });
@@ -48,7 +47,7 @@ export default function CreateWorkspacePage() {
     
 
 
- 
+  
 
   // 🔍 Check if name already exists (case-insensitive)
   const duplicate = orgs.find(
@@ -92,8 +91,6 @@ const supportRole = {
 
 localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]));
 
-      // useRoleStore.getState().setRoles([adminRole, supportRole]);
-
     const newMembership = {
       orgId,
       role: "org_admin" ,
@@ -106,18 +103,15 @@ localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]))
   memberships: [...user.memberships, newMembership],
 };
     // Save org
- 
- 
-
-    useOrganizationStore.getState().addOrganization({
+    const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
+    localStorage.setItem("organizations", JSON.stringify([...orgs, {
       id: orgId,
       name: form.name,
       address: form.address,
-    })
+    }]));
 
     // Save user
-    useUserStore.getState().updateUser(updatedUser);
-
+    localStorage.setItem("user", JSON.stringify(updatedUser));
     setCurrentUser(updatedUser);
     setActiveOrg(newMembership);
 
@@ -126,8 +120,7 @@ localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]))
     const updatedUsers = allUsers.map((u: User) =>
       u.id === updatedUser.id ? updatedUser : u
     );
-    // localStorage.setItem("users", JSON.stringify(updatedUsers));
-        useUserStore.getState().setUsers(updatedUsers);
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
     //  localStorage.setItem(`users_${orgId}`, JSON.stringify(updatedUser));
 
     router.push("/organization");

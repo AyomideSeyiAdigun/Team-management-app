@@ -21,11 +21,25 @@ export const useUserStore = create<UserStore>((set) => ({
 
   loadUsers: () => {
     const orgId = useAuthStore.getState().activeOrg?.orgId;
-    const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    // const allUsers:User[] = JSON.parse(localStorage.getItem("users") || "[]");
 
-    const filtered = allUsers.filter((u: User) =>
-      u.memberships?.some((m: Membership) => m.orgId === orgId)
-    );
+    // const filtered:User[] = allUsers.filter((u: User) =>
+    //   u.memberships?.some((m: Membership) => m.orgId === orgId)
+    // );
+    const stored = localStorage.getItem("users");
+let allUsers: User[] = [];
+
+try {
+  const parsed = JSON.parse(stored || "[]");
+  allUsers = Array.isArray(parsed) ? parsed : [];
+} catch (error) {
+  console.error("Failed to parse users from localStorage", error);
+  allUsers = [];
+}
+
+const filtered: User[] = allUsers.filter((u: User) =>
+  u.memberships?.some((m: Membership) => m.orgId === orgId)
+);
 
     set({ users: filtered });
   },

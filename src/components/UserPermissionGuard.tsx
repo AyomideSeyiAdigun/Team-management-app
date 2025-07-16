@@ -26,9 +26,11 @@ export default function UserPermissionGuard({ children, requiredPermissions }: P
   useEffect(() => {
     setHasMounted(true);
     if (!isAllowed) {
-      router.push("/organization"); // or dashboard
+    router.push("/organization"); // or d
     }
-  });
+  },[hasMounted,isAllowed,router]);
+
+   
    if (!hasMounted) return null;
 
   if (!isAllowed) return null;

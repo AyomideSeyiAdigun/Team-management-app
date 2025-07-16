@@ -14,7 +14,7 @@ export default function OrganizationLayout({
 
   useEffect(() => {
     loadActiveOrg();
-  }, []);
+  }, [loadActiveOrg]);
 
   return (
     <div className="flex">
