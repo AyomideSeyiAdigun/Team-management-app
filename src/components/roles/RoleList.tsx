@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
-
-export default function RoleList({ roles, onEdit,onDelete }: { roles: any[]; onEdit: (r: any) => void; onDelete: (r: any) => void  }) {
+import type { Role } from "@/types";
+export default function RoleList({ roles, onEdit,onDelete }: { roles: Role[]; onEdit: (r: Role) => void; onDelete: (r: Role) => void  }) {
   
   return (
     <div className="space-y-4">

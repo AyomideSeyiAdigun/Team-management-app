@@ -20,7 +20,7 @@ Follow these steps to **run the app locally**:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ayomideadigun2014/team-management-app.git
+git clone https://github.com/AyomideSeyiAdigun/Team-management-app.git
 cd team-management-app
 ````
 
@@ -143,18 +143,8 @@ src/
   * See all audit logs
 
 ---
-
-## 🖥 Deployment
-
-You can deploy this frontend app easily with:
-
-* [Vercel](https://vercel.com/)
-* [Netlify](https://netlify.com/)
-* [Static Hosting](https://pages.github.com/)
-
-> ⚠ Note: This app is frontend-only and stores all data in localStorage. **Do not use for production** without integrating a backend!
-
----
+ 
+ 
 
 ## 📄 License
 

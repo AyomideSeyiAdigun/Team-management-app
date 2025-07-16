@@ -1,10 +1,11 @@
 "use client";
 
+import type { Membership, Organization, User } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function SuperAdminUsersPage() {
-  const [users, setUsers] = useState<any[]>([]);
-  const [orgs, setOrgs] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [orgs, setOrgs] = useState<Organization[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [orgFilter, setOrgFilter] = useState("");
 
@@ -23,14 +24,14 @@ export default function SuperAdminUsersPage() {
       email.includes(searchTerm.toLowerCase());
 
     const matchesOrg = orgFilter
-      ? user.memberships?.some((m: any) => m.orgId === orgFilter)
+      ? user.memberships?.some((m: Membership) => m.orgId === orgFilter)
       : true;
 
     return matchesSearch && matchesOrg;
   });
 
   const getOrgName = (orgId: string) =>
-    orgs.find((org: any) => org.id === orgId)?.name || "Unknown";
+    orgs.find((org: Organization) => org.id === orgId)?.name || "Unknown";
 
   return (
     <div>
@@ -88,7 +89,7 @@ export default function SuperAdminUsersPage() {
                 </td>
                 <td className="p-2">{user.email}</td>
                 <td className="p-2">
-                  {user.memberships?.map((m: any, i: number) => (
+                  {user.memberships?.map((m: Membership, i: number) => (
                     <span key={i} className="block">
                       {getOrgName(m.orgId)} ({m.role})
                     </span>

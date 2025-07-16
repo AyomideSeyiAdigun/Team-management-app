@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import ChangeAdminModal from "@/components/super-admin/ChangeAdminModal";
 import CreateOrganizationModal from "@/components/super-admin/CreateOrganizationModal";
+import type { Membership, Organization, User } from "@/types";
+import { useEffect, useState } from "react";
+
 export default function OrganizationsPage() {
-  const [orgs, setOrgs] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [orgs, setOrgs] = useState<Organization[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("");
+  const [filter] = useState("");
   const [editOrgId, setEditOrgId] = useState<string | null>(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -26,7 +28,7 @@ export default function OrganizationsPage() {
     localStorage.removeItem(`roles_${orgId}`);
 
     const updatedUsers = users.map((user) => {
-      const filtered = user.memberships?.filter((m: any) => m.orgId !== orgId) || [];
+      const filtered = user.memberships?.filter((m: Membership) => m.orgId !== orgId) || [];
       return { ...user, memberships: filtered };
     });
 
@@ -47,7 +49,7 @@ export default function OrganizationsPage() {
   };
 
   const getUserCount = (orgId: string) =>
-    users.filter((u) => u.memberships?.some((m: any) => m.orgId === orgId)).length;
+    users.filter((u) => u.memberships?.some((m: Membership) => m.orgId === orgId)).length;
 
   const getTeamCount = (orgId: string) =>
     JSON.parse(localStorage.getItem(`teams_${orgId}`) || "[]").length;
@@ -55,7 +57,7 @@ export default function OrganizationsPage() {
   const getAdmins = (orgId: string) => {
     return users
       .filter((u) =>
-        u.memberships?.some((m: any) => m.orgId === orgId && m.role === "org_admin")
+        u.memberships?.some((m: Membership) => m.orgId === orgId && m.role === "org_admin")
       )
       .map((u) => u.email)
       .join(", ") || "—";

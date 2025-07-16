@@ -23,7 +23,7 @@ export default function UserPermissionGuard({ children, requiredPermissions }: P
     if (!isAllowed) {
       router.push("/organization"); // or dashboard
     }
-  }, [isAllowed]);
+  });
 
   if (!isAllowed) return null;
 

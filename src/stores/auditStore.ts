@@ -1,22 +1,15 @@
 import { create } from "zustand";
+import { LogEntry } from "../types";
 import { useAuthStore } from "./authStore";
 
-
-interface LogEntry {
-  actor: string;
-  action: string;
-  target: string;
-  timestamp: string;
-  orgId: string;
-}
-
+ 
 interface AuditStore {
   logs: LogEntry[];
   loadLogs: () => void;
   addLog: (entry: LogEntry) => void;
 }
 
-export const useAuditStore = create<AuditStore>((set, get) => ({
+export const useAuditStore = create<AuditStore>((set) => ({
   logs: [],
   
 

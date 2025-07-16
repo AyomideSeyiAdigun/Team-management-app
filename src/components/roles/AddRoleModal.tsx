@@ -1,7 +1,8 @@
 // components/roles/RoleModal.tsx
 
 "use client";
-import { useState, useEffect } from "react";
+import type { Role } from "@/types";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const allPermissions = [
@@ -24,8 +25,8 @@ export default function RoleModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (role: any) => void;
-  initialRole?: any;
+  onSave: (role: Role) => void;
+  initialRole?: Role|null;
 }) {
   const [roleName, setRoleName] = useState("");
   const [permissions, setPermissions] = useState<string[]>([]);

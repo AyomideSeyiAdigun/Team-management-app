@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Team } from "../../types";
 
 export default function AdminPanelDashboard() {
   const [orgCount, setOrgCount] = useState(0);
@@ -16,7 +17,7 @@ export default function AdminPanelDashboard() {
       key.startsWith("teams_")
     );
 
-    let allTeams: any[] = [];
+    let allTeams: Team[] = [];
     for (const key of allTeamKeys) {
       const teams = JSON.parse(localStorage.getItem(key) || "[]");
       allTeams = [...allTeams, ...teams];

@@ -1,12 +1,7 @@
 import { create } from "zustand";
+import { Team } from "../types";
 import { useAuthStore } from "./authStore";
-
-interface Team {
-  id: string;
-  name: string;
-  members: string[]; // user emails or ids
-}
-
+ 
 interface TeamStore {
   teams: Team[];
   setTeams: (teams: Team[]) => void;

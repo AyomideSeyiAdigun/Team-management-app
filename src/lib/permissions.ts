@@ -1,3 +1,4 @@
+
 export const DEFAULT_ADMIN_PERMISSIONS = [
   "view_users",
   "manage_users",
@@ -16,13 +17,13 @@ export const DEFAULT_ADMIN_PERMISSIONS = [
  * @param permission - The permission string to check (e.g., "view_users")
  * @param orgId - The organization ID to check in (optional if user has activeOrg)
  */
-export function hasPermission(user: any, permission: string, orgId?: string): boolean {
-  if (!user || !permission) return false;
+// export function hasPermission(user: User, permission: string, orgId?: string): boolean {
+//   if (!user || !permission) return false;
 
-  // Find the matching membership
-  const membership = user.memberships?.find((m: any) => {
-    return orgId ? m.orgId === orgId : m.orgId === user.activeOrg?.orgId;
-  });
+//   // Find the matching membership
+//   const membership = user.memberships?.find((m: Membership) => {
+//     return orgId ? m.orgId === orgId : m.orgId === user.activeOrg?.orgId;
+//   });
 
-  return membership?.permissions?.includes(permission) || false;
-}
+//   return membership?.permissions?.includes(permission) || false;
+// }

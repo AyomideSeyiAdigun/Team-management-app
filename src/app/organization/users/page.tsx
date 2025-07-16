@@ -6,9 +6,13 @@ import { useAuditStore } from "@/stores/auditStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRoleStore } from "@/stores/roleStore";
 import { useUserStore } from "@/stores/userStore";
+import type { CombinedUser, Role, UserInvite } from "@/types";
+ 
 import { useEffect, useState } from "react";
 
 export default function UsersPage() {
+
+
  
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
@@ -16,21 +20,19 @@ export default function UsersPage() {
  
 const orgId = activeOrg?.orgId;
   const canManageUsers = currentUser?.memberships[0]?.permissions.includes("manage_users");
-
-  const users = useUserStore((state) => state.users);
   const loadUsers = useUserStore((state) => state.loadUsers);
      const roles = useRoleStore((state) => state.roles);
     const loadRoles = useRoleStore((state) => state.loadRoles);
-    const [combineUsers, setCombineUsers] = useState<any[]>([]);
+    const [combineUsers, setCombineUsers] = useState< CombinedUser[]>([]);
 useEffect(() => { 
  loadRoles();
  loadUsers();
   // Filter invites for the current org only
-      const invites = JSON.parse(localStorage.getItem("userInvites") || "[]");
-const orgInvites = invites.filter((invite: any) => invite.orgId === orgId);
+      const invites:UserInvite[] = JSON.parse(localStorage.getItem("userInvites") || "[]");
+const orgInvites:UserInvite[] = invites.filter((invite: UserInvite) => invite.orgId === orgId);
 
 // Convert to placeholder user objects
-const invitedUsers = orgInvites.map((invite: any) => ({
+const invitedUsers = orgInvites.map((invite: UserInvite) => ({
   email: invite.email,
   role: "pending",
   status: "pending",
@@ -56,7 +58,7 @@ const invite = {
   role: "support", // auto-assign support role
 };
  const alreadyInvited = invites.some(
-  (i: any) => i.email === invite.email && i.orgId === invite.orgId
+  (i: UserInvite) => i.email === invite.email && i.orgId === invite.orgId
 );
     if (!alreadyInvited) {
       invites.push(invite);
@@ -73,8 +75,8 @@ const invite = {
   });
   };
 
-const filteredUsers = filter
-  ? combineUsers.filter((u) => u.role === filter)
+const filteredUsers :CombinedUser[] = filter
+  ? combineUsers.filter((u:CombinedUser) => u.role === filter)
   : combineUsers;
 
   return (
@@ -100,7 +102,7 @@ const filteredUsers = filter
   className="border px-3 py-2 rounded dark:bg-gray-800"
 >
   <option value="">All Roles</option>
-  {roles.map((role: any) => (
+  {roles.map((role: Role) => (
     <option key={role.id} value={role.name}>
       {role.name}
     </option>

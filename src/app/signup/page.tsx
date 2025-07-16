@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
+import type { Role, User, UserInvite } from "@/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -26,14 +27,14 @@ const handlePostSignup = (email: string) => {
   const userInvites = JSON.parse(localStorage.getItem("userInvites") || "[]");
   // Retrieve the newly created user from localStorage or define how to get it
   const newUser = JSON.parse(localStorage.getItem("user") || "null");
-  const matchedInvite = userInvites.find((i: any) => i.email === email);
+  const matchedInvite = userInvites.find((i: UserInvite) => i.email === email);
 
   if (matchedInvite) {
 
       const { orgId, role } = matchedInvite;
 
   const roles = JSON.parse(localStorage.getItem(`roles_${orgId}`) || "[]");
-  const roleObj = roles.find((r: any) => r.id === role);
+  const roleObj = roles.find((r: Role) => r.id === role);
 
   const membership = {
     orgId,
@@ -45,7 +46,7 @@ const handlePostSignup = (email: string) => {
   // Add user to org
   const orgUsers = JSON.parse(localStorage.getItem(`users`) || "[]");
     const updatedUser = orgUsers.filter(
-    (i: any) => i.id !== newUser.id  
+    (i: User) => i.id !== newUser.id  
   );
 
   const memberships = newUser.memberships || [];
@@ -62,7 +63,7 @@ const handlePostSignup = (email: string) => {
   
       // Remove invite
   const updatedInvites = userInvites.filter(
-    (i: any) => i.email !== email  
+    (i: UserInvite) => i.email !== email  
   );
   localStorage.setItem("userInvites", JSON.stringify(updatedInvites));
   setActiveOrg (membership);
@@ -92,7 +93,7 @@ const handlePostSignup = (email: string) => {
       return;
     }
 
-    const username = `${form.firstName.toLowerCase()}_${form.lastName.toLowerCase()}`;
+ 
 
 signUp({
     firstName: form.firstName,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/stores/authStore";
+import type { Membership, Organization } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -8,8 +9,8 @@ export default function SelectOrganizationPage() {
   const router = useRouter();
   const { currentUser, setActiveOrg } = useAuthStore();
 
-  const [orgList, setOrgList] = useState<any[]>([]);
-  const [memberships, setMemberships] = useState<any[]>([]);
+  const [orgList, setOrgList] = useState<Organization[]>([]);
+  const [memberships, setMemberships] = useState<Membership[]>([]);
 
   useEffect(() => {
     const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
@@ -23,7 +24,7 @@ export default function SelectOrganizationPage() {
   const getOrgName = (orgId: string) =>
     orgList.find((o) => o.id === orgId)?.name || "Unnamed Organization";
 
-  const handleSelect = (membership: any) => {
+  const handleSelect = (membership: Membership) => {
     setActiveOrg(membership);
     router.push("/organization");
   };
@@ -33,7 +34,7 @@ export default function SelectOrganizationPage() {
       <h1 className="text-2xl font-bold mb-6">Select an Organization</h1>
   
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {memberships.map((membership: any) => (
+        {memberships.map((membership: Membership) => (
           <div
             key={membership.orgId}
             className="cursor-pointer border rounded-lg p-6 shadow hover:shadow-lg transition dark:bg-gray-800 dark:border-gray-700"

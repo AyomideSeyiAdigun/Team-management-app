@@ -1,4 +1,6 @@
 "use client";
+import type { Membership, Organization } from "@/types";
+import { User } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function ChangeAdminModal({
@@ -10,26 +12,29 @@ export default function ChangeAdminModal({
   onClose: () => void;
   onSave: () => void;
 }) {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedAdmins, setSelectedAdmins] = useState<string[]>([]);
-  const [orgData, setOrgData] = useState<any>({ name: "", address: "" });
+  const [orgData, setOrgData] = useState<Organization>( {  id: "",
+  name: "",
+  address: "",
+  admins: []});
 
   useEffect(() => {
     const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
     const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
 
-    const org = orgs.find((o: any) => o.id === orgId);
+    const org = orgs.find((o: Organization) => o.id === orgId);
     setOrgData(org || {});
 
-    const orgUsers = allUsers.filter((u: any) =>
-      u.memberships?.some((m: any) => m.orgId === orgId)
+    const orgUsers = allUsers.filter((u: User) =>
+      u.memberships?.some((m: Membership) => m.orgId === orgId)
     );
 
     const currentAdmins = orgUsers
-      .filter((u: any) =>
-        u.memberships?.some((m: any) => m.orgId === orgId && m.role === "org_admin")
+      .filter((u: User) =>
+        u.memberships?.some((m: Membership) => m.orgId === orgId && m.role === "org_admin")
       )
-      .map((u: any) => u.email);
+      .map((u: User) => u.email);
 
     setSelectedAdmins(currentAdmins);
     setUsers(orgUsers);
@@ -46,9 +51,9 @@ export default function ChangeAdminModal({
   const handleSave = () => {
     const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
 
-    const updatedUsers = allUsers.map((user: any) => {
+    const updatedUsers = allUsers.map((user: User) => {
       if (user.memberships) {
-        user.memberships = user.memberships.map((m: any) => {
+        user.memberships = user.memberships.map((m: Membership) => {
           if (m.orgId === orgId) {
             if (selectedAdmins.includes(user.email)) {
               m.role = "org_admin";
@@ -72,7 +77,7 @@ export default function ChangeAdminModal({
       return user;
     });
 
-    const updatedOrgs = JSON.parse(localStorage.getItem("organizations") || "[]").map((o: any) => {
+    const updatedOrgs = JSON.parse(localStorage.getItem("organizations") || "[]").map((o: Organization) => {
       if (o.id === orgId) return { ...o, name: orgData.name, address: orgData.address };
       return o;
     });

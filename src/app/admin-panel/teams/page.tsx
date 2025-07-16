@@ -1,10 +1,11 @@
 "use client";
 
+import type { Organization, Team } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function SuperAdminTeamsPage() {
-  const [teams, setTeams] = useState<any[]>([]);
-  const [orgs, setOrgs] = useState<any[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [orgs, setOrgs] = useState<Organization[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [orgFilter, setOrgFilter] = useState("");
 
@@ -17,13 +18,10 @@ export default function SuperAdminTeamsPage() {
       key.startsWith("teams_")
     );
 
-    let allTeams: any[] = [];
+    let allTeams: Team[] = [];
     for (const key of allTeamKeys) {
-      const orgId = key.split("_")[1];
-     
-      
       const teamList = JSON.parse(localStorage.getItem(key) || "[]");
-      const teamsWithOrg = teamList.map((t: any) => ({
+      const teamsWithOrg = teamList.map((t: Team) => ({
         ...t,
         orgId:  key.split("_")[2], // Prefix orgId to match the format used in other parts
       }));
@@ -33,7 +31,7 @@ export default function SuperAdminTeamsPage() {
     setTeams(allTeams);
   }, []);
 
-  const getOrgName = (orgId: string) =>  orgs.find((org: any) => org.id === `org_${orgId}`)?.name || "Unknown";
+  const getOrgName = (orgId: string) =>  orgs.find((org: Organization) => org.id === `org_${orgId}`)?.name || "Unknown";
 
   const filteredTeams = teams.filter((team) => {
     const matchesSearch = team.name
@@ -97,7 +95,7 @@ export default function SuperAdminTeamsPage() {
                 className="border-t dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 <td className="p-2">{team.name}</td>
-                <td className="p-2">{getOrgName(team.orgId)}</td>
+                <td className="p-2">{getOrgName(team.orgId||"")}</td>
                 <td className="p-2">{team.members?.length || 0}</td>
               </tr>
             ))}

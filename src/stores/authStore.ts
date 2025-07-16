@@ -1,23 +1,12 @@
+import { decryptPassword, encryptPassword } from "@/lib/auth";
+import { v4 as uuidv4 } from 'uuid';
 import { create } from "zustand";
-import { encryptPassword, decryptPassword } from "@/lib/auth";
+import { Membership, User } from "../types";
 
 
-type Membership = {
-  orgId: string;
-  role: "org_admin" | "employee";
-  permissions: string[];
-};
+ ;
 
-type User = {
-  firstName: any;
-  lastName: any;
-  id: string;
-  email: string;
-  password: string; // encrypted
-  memberships: Membership[];
-  isSuperAdmin?: boolean; // optional for super admin users
-};
-
+ 
 type AuthStore = {
   currentUser: User | null;
   activeOrg: Membership | null;
@@ -30,7 +19,7 @@ type AuthStore = {
    setCurrentUser: (user: User) => void;
   setActiveOrg: (org: Membership) => void;
 };
-import { v4 as uuidv4 } from 'uuid';
+
 export const useAuthStore = create<AuthStore>((set) => ({
 
   
@@ -109,5 +98,5 @@ login: (email, password) => {
     set({ activeOrg: membership });
   },
    setCurrentUser: (user: User) => set({ currentUser: user }),
-  setActiveOrg: (org: any) => set({ activeOrg: org }),
+  setActiveOrg: (org) => set({ activeOrg: org }),
 }));

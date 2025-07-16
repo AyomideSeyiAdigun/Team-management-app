@@ -1,30 +1,35 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useAuthStore } from "@/stores/authStore";
-import { useRouter } from "next/navigation";
 import { useAuditStore } from "@/stores/auditStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
+import type { CombinedUser, UserInvite } from "@/types";
+import { Membership, Role } from "@/types";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function UserTable({
   users,
 }: {
-  users: any[];
+  users: CombinedUser[];
 }) {
   const { currentUser, activeOrg } = useAuthStore();
   const orgId = activeOrg?.orgId;
   const rolesKey = `roles_${orgId}`;
-  const [roles, setRoles] = useState<any[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const router = useRouter();
   const canManageUsers = currentUser?.memberships[0]?.permissions.includes("manage_users");
   useEffect(() => {
     const r = JSON.parse(localStorage.getItem(rolesKey) || "[]");
     setRoles(r);
-  }, [orgId]);
+  }, [orgId,rolesKey]);
 
 
-   const getUserStatus = (user: any) => {
+   const getUserStatus = (user: CombinedUser) => {
+    if (!user) return "unknown";
+    if ("memberships" in user && user.memberships.length > 0) {
     const isSignedUp = user.firstName || user.lastName;
     return isSignedUp ? "active" : "pending";
+    }
   };
 
   const handleRoleChange = (email: string, newRole: string) => {
@@ -34,11 +39,11 @@ export default function UserTable({
     }
 
   // Step 2: Map through users and update role if email + org match
-  const updatedUsers = users.map((user: any) => {
+  const updatedUsers:CombinedUser[] = users.map((user: CombinedUser) => {
 
-    if (user.email === email && user.status!== "pending") {
+    if (user.email === email && user.status!== "pending" &&  "memberships" in user) {
       
-      const updatedMemberships = user.memberships?.map((membership: any) => {
+      const updatedMemberships = user.memberships?.map((membership: Membership) => {
         if (membership.role === "Org Admin" || newRole === "Org Admin") {
           alert("You cannot change the role of an organization admin or assign that role to a user.");
           return membership;
@@ -89,17 +94,23 @@ export default function UserTable({
       alert("You do not have permission to change user roles.");
       return;
     }
-    const user = users.find((u) => u.email === email);
+    const user:CombinedUser|undefined = users.find((u) => u.email === email);
+    if (!user) {
+      alert("User not found.");
+      return;
+    }
 
-    if (user.status) {
+    if (user.status === "pending") {
       alert("Deleting this user means their invite will be cancelled.");
       const invites = JSON.parse(localStorage.getItem("userInvites") || "[]");
-      const remainingInvites = invites.filter((invite: any) => invite.email !== user.email);
+      const remainingInvites = invites.filter((invite: UserInvite) => invite.email !== user.email);
      localStorage.setItem("userInvites", JSON.stringify(remainingInvites));
       window.location.reload();
       return;
     }
-    
+    if ("memberships" in user){
+
+ 
 
     if (user?.memberships[0]?.role === "org_admin") {
       alert("You cannot delete an organization admin.");
@@ -109,17 +120,22 @@ export default function UserTable({
     
     // const filtered = users.filter((u) => u.email !== email);
 
-const updatedGlobalUsers = users.map((u: any) => {
-  if (u.email === email) {
+const updatedGlobalUsers:CombinedUser[] = users.map((u: CombinedUser) => {
+  if (u.email === email && "memberships" in u) {
     return {
       ...u,
-      memberships: (u.memberships || []).filter((m: any) => m.orgId !== orgId),
+      memberships: ( u.memberships || []).filter((m: Membership) => m.orgId !== orgId),
     };
   }
   return u;
 });
 
-  useUserStore.getState().setUsers(updatedGlobalUsers);
+ 
+    useUserStore.getState().setUsers(updatedGlobalUsers);
+ 
+
+
+
 
      useAuditStore.getState().addLog({
       actor: currentUser?.email || "unknown",
@@ -129,6 +145,7 @@ const updatedGlobalUsers = users.map((u: any) => {
       timestamp: new Date().toISOString(),
     });
     router.refresh();
+       }
   };
 
   return (
@@ -143,19 +160,19 @@ const updatedGlobalUsers = users.map((u: any) => {
         </tr>
       </thead>
       <tbody>
-        {users.map((user) =>{
+        {users.map((user:CombinedUser) =>{
 
-  const membership =  user?.memberships?.find(
-    (m: any) => m.orgId === orgId
+  const membership =  "memberships" in user && user?.memberships?.find(
+    (m: Membership) => m.orgId === orgId
   );
   
-  const roleNow = membership?.role || "N/A";
+  const roleNow = membership ? membership?.role : "N/A";
   const displayRole = formatRole(roleNow); 
         return(
           
           <tr key={user.email} className="border-b dark:border-gray-600">
             <td className="p-3">
-              {user.firstName || "-"} {user.lastName || "-"}
+              {"memberships" in user&& user.firstName || "-"} {"memberships" in user&&user.lastName || "-"}
             </td>
             <td className="p-3">{user.email}</td>
             <td className="p-3">
@@ -164,7 +181,7 @@ const updatedGlobalUsers = users.map((u: any) => {
                 onChange={(e) => handleRoleChange(user.email, e.target.value)}
                 className="border rounded px-2 py-1 dark:bg-gray-700"
               >
-                {roles.map((role: any) => (
+                {roles.map((role: Role) => (
                   <option key={role.id} value={role.name}>
                     {role.name}
                   </option>

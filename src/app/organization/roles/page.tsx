@@ -1,12 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/stores/authStore";
 import RoleModal from "@/components/roles/AddRoleModal";
 import RoleList from "@/components/roles/RoleList";
 import UserPermissionGuard from "@/components/UserPermissionGuard";
 import { useAuditStore } from "@/stores/auditStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useRoleStore } from "@/stores/roleStore";
 import { useUserStore } from "@/stores/userStore";
+import type { Membership, Role } from "@/types";
+import { useEffect, useState } from "react";
 
 export default function RolesPage() {
   const { currentUser, activeOrg } = useAuthStore();
@@ -15,7 +16,7 @@ export default function RolesPage() {
 
   // const [roles, setRoles] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState<any>(null);
+  const [editingRole, setEditingRole] = useState<Role|null>(null);
 
    const roles = useRoleStore((state) => state.roles);
   const loadRoles = useRoleStore((state) => state.loadRoles);
@@ -30,7 +31,12 @@ const loadUsers = useUserStore((state) => state.loadUsers);
     loadUsers();
   }, [loadRoles,orgId,loadUsers]);
 
-  const saveRole = (role: any) => {
+  const saveRole = (role: Role) => {
+
+     if (role.id === "default" || role.id === "org_admin" || role.id === "support") {
+      alert("You cannot edit the default role.");
+      return;
+    }
     if (!canManageRoles) {
       alert("You do not have permission to manage roles.");
       return;
@@ -54,7 +60,7 @@ const loadUsers = useUserStore((state) => state.loadUsers);
 });
   };
 
-  const handleDelete = (role:any) => {
+  const handleDelete = (role:Role) => {
 
     if (role.id === "default" || role.id === "org_admin" || role.id === "support") {
       alert("You cannot delete the default role.");
@@ -77,8 +83,8 @@ const loadUsers = useUserStore((state) => state.loadUsers);
   }
 
   //  Update users with deleted role
-  const updatedUsers = users.map((user: any) => {
-    const updatedMemberships = user.memberships?.map((membership: any) => {
+  const updatedUsers = users.map((user) => {
+    const updatedMemberships = user.memberships?.map((membership: Membership) => {
       if (membership.orgId === orgId && membership.role === role.name) {
         return {
           ...membership,
@@ -112,9 +118,6 @@ const loadUsers = useUserStore((state) => state.loadUsers);
 
   return (
          <UserPermissionGuard requiredPermissions={["view_roles"]}>
-
-
-
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Roles</h1>
 
@@ -134,6 +137,12 @@ const loadUsers = useUserStore((state) => state.loadUsers);
         onEdit={(role) => {
              if (!canManageRoles) {
       alert("You do not have permission to manage roles.");
+      return;
+
+    }
+
+     if (role.id === "default" || role.id === "org_admin" || role.id === "support") {
+      alert("You cannot Edit the default role.");
       return;
     }
           setEditingRole(role);

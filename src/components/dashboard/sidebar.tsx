@@ -1,12 +1,14 @@
 "use client";
 
+import { useMounted } from "@/hooks/useMounted";
+import { useAuthStore } from "@/stores/authStore";
+import { FileSearch, LayoutDashboard, ShieldCheck, Users, Users2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuthStore } from "@/stores/authStore";
-import { Users, LayoutDashboard, FileSearch, Users2 } from "lucide-react";
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const mounted = useMounted();
   const { activeOrg } = useAuthStore();
 
   const permissions = activeOrg?.permissions || [];
@@ -35,7 +37,7 @@ const Sidebar = () => {
     {
       label: "Roles",
       href: "/organization/roles",
-      icon: <Users2 className="w-5 h-5" />, // 👈 New Teams route
+      icon: <ShieldCheck className="w-5 h-5" />,
       permission: "view_roles",
     },
     {
@@ -52,7 +54,7 @@ const Sidebar = () => {
         Team Manager
       </div>
       <nav className="mt-4 flex flex-col space-y-2 px-4">
-        {links.map((link) => {
+        {mounted&&links.map((link) => {
           if (!link.alwaysShow && !hasPermission(link.permission!)) return null;
 
           const isActive = pathname === link.href;

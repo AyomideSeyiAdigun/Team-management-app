@@ -1,20 +1,21 @@
 "use client";
 
+import type { LogEntry, Organization } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function SuperAdminAuditTrailPage() {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [organizations, setOrganizations] = useState<any[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
     setOrganizations(orgs);
 
-    const allLogs: any[] = [];
+    const allLogs: LogEntry[] = [];
 
     // Load global super-admin logs
-    const globalLogs = JSON.parse(localStorage.getItem("auditLogs") || "[]").map((log: any) => ({
+    const globalLogs = JSON.parse(localStorage.getItem("auditLogs") || "[]").map((log: Organization) => ({
       ...log,
       orgId: "super_admin",
       orgName: "Super Admin",
@@ -23,10 +24,10 @@ export default function SuperAdminAuditTrailPage() {
     allLogs.push(...globalLogs);
 
     // Load each org's audit logs
-    orgs.forEach((org: any) => {
+    orgs.forEach((org: Organization) => {
       const orgLogs = JSON.parse(localStorage.getItem(`audit_${org.id}`) || "[]");
       allLogs.push(
-        ...orgLogs.map((log: any) => ({
+        ...orgLogs.map((log: Organization) => ({
           ...log,
           orgId: org.id,
           orgName: org.name,

@@ -2,9 +2,12 @@
 "use client";
 
 import { useAuthStore } from "@/stores/authStore"; // Zustand
+import type { Organization, User } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import { useOrganizationStore } from "../../stores/organizationStore";
+import { useUserStore } from "../../stores/userStore";
 
 export default function CreateWorkspacePage() {
   const [form, setForm] = useState({ name: "", address: "" });
@@ -12,9 +15,17 @@ export default function CreateWorkspacePage() {
 
   const setCurrentUser = useAuthStore((s) => s.setCurrentUser);
   const setActiveOrg = useAuthStore((s) => s.setActiveOrg);
-  const currentUser = useAuthStore((s) => s.currentUser);
+   
 
   const router = useRouter();
+    const orgs = useOrganizationStore((state) => state.organizations);
+  const loadOrganizations = useOrganizationStore((state) => state.loadOrganizations);
+  
+ 
+
+    useEffect(() => {
+       loadOrganizations()
+  }, [loadOrganizations]);
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,12 +45,14 @@ export default function CreateWorkspacePage() {
       return;
     }
 
+    
 
-  const existingOrgs = JSON.parse(localStorage.getItem("organizations") || "[]");
+
+ 
 
   // 🔍 Check if name already exists (case-insensitive)
-  const duplicate = existingOrgs.find(
-    (org: any) => org.name.toLowerCase() === form.name.toLowerCase()
+  const duplicate = orgs.find(
+    (org: Organization) => org.name.toLowerCase() === form.name.toLowerCase()
   );
 
   if (duplicate) {
@@ -75,11 +88,15 @@ const supportRole = {
 };
 
 // Save roles to localStorage
+
+
 localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]));
+
+      // useRoleStore.getState().setRoles([adminRole, supportRole]);
 
     const newMembership = {
       orgId,
-      role: "org_admin" as "org_admin",
+      role: "org_admin" ,
       permissions: adminRole.permissions,
       orgName: form.name,
     };
@@ -89,24 +106,28 @@ localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]))
   memberships: [...user.memberships, newMembership],
 };
     // Save org
-    const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
-    localStorage.setItem("organizations", JSON.stringify([...orgs, {
+ 
+ 
+
+    useOrganizationStore.getState().addOrganization({
       id: orgId,
       name: form.name,
       address: form.address,
-    }]));
+    })
 
     // Save user
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+    useUserStore.getState().updateUser(updatedUser);
+
     setCurrentUser(updatedUser);
     setActiveOrg(newMembership);
 
     // Update in users list
     const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    const updatedUsers = allUsers.map((u: any) =>
+    const updatedUsers = allUsers.map((u: User) =>
       u.id === updatedUser.id ? updatedUser : u
     );
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    // localStorage.setItem("users", JSON.stringify(updatedUsers));
+        useUserStore.getState().setUsers(updatedUsers);
     //  localStorage.setItem(`users_${orgId}`, JSON.stringify(updatedUser));
 
     router.push("/organization");

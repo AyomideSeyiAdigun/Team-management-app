@@ -1,9 +1,11 @@
 "use client";
 
 import { useAuthStore } from "@/stores/authStore";
+import type { Organization } from "@/types";
+import { ChevronDown, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { useOrganizationStore } from "../../stores/organizationStore";
 
 export default function DashboardNavbar() {
   const { currentUser, activeOrg, setActiveOrg, logout } = useAuthStore();
@@ -11,13 +13,17 @@ export default function DashboardNavbar() {
 
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [orgs, setOrgs] = useState<any[]>([]);
+    const orgs = useOrganizationStore((state) => state.organizations);
+  const loadOrganizations = useOrganizationStore((state) => state.loadOrganizations);
+  
+ 
 
     useEffect(() => {
-    const storedOrgs = JSON.parse(localStorage.getItem("organizations") || "[]");
-    setOrgs(storedOrgs);
-  }, []);
+       loadOrganizations()
+  }, [loadOrganizations]);
 
+
+ 
  
 const otherOrgs = currentUser?.memberships
     ?.filter((m) => m.orgId !== activeOrg?.orgId)
@@ -36,9 +42,8 @@ const otherOrgs = currentUser?.memberships
       router.refresh(); // or push to /dashboard
     }
   };
-  const getOrgNameById=(orgId: any): string =>{
-  const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
-  const org = orgs.find((o: any) => o.id === orgId);
+  const getOrgNameById=(orgId: string): string =>{
+  const org:Organization|undefined = orgs.find((o: Organization) => o.id === orgId);
   return org?.name || "Unknown Organization";
 }
 
@@ -54,7 +59,7 @@ const otherOrgs = currentUser?.memberships
           onClick={() => setOrgDropdownOpen((prev) => !prev)}
           className="flex items-center space-x-2 font-semibold text-lg text-gray-800 dark:text-white"
         >
-          <span>{getOrgNameById(activeOrg?.orgId )|| "No Org"}</span>
+          <span>{getOrgNameById(activeOrg?.orgId||'' )|| "No Org"}</span>
             <ChevronDown className="w-4 h-4" />
         </button>
 

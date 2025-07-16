@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/authStore";
-import Link from "next/link";
 import { useAuditStore } from "@/stores/auditStore";
- 
+import { useAuthStore } from "@/stores/authStore";
+import type { Membership, Role, User, UserInvite } from "@/types";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -21,28 +21,28 @@ export default function LoginPage() {
   };
 
   const handleInvite =  (loginEmail:string) => {
-const userEmail = loginEmail.toLowerCase();
-const invites = JSON.parse(localStorage.getItem("userInvites") || "[]");
- const newUser = JSON.parse(localStorage.getItem("user") || "null");
+const userEmail:string = loginEmail.toLowerCase();
+const invites:UserInvite[] = JSON.parse(localStorage.getItem("userInvites") || "[]");
+ const newUser:User = JSON.parse(localStorage.getItem("user") || "null");
  
 // 1. Filter invites for this user
-const acceptedInvites = invites.filter((invite: any) => invite.email === userEmail);
+const acceptedInvites:UserInvite[]= invites.filter((invite: UserInvite) => invite.email === userEmail);
 
 // 2. Go through each invite (in case multiple orgs invited them)
-const newMemberships = [];
+const newMemberships:Membership[] = [];
 
 for (const invite of acceptedInvites) {
   const { orgId, role } = invite;
 
   // Get role details
   const roles = JSON.parse(localStorage.getItem(`roles_${orgId}`) || "[]");
-  const roleObj = roles.find((r: any) => r.id === role);
+  const roleObj = roles.find((r: Role) => r.id === role);
 
   const permissions = roleObj?.permissions || [];
 
   // Add user to org's user list if not already added
   const orgUsers = JSON.parse(localStorage.getItem(`users`) || "[]");
-  const isAlreadyAdded = orgUsers.some((u: any) => u.id === newUser.id);
+  const isAlreadyAdded = orgUsers.some((u: User) => u.id === newUser.id);
 
   if (!isAlreadyAdded) {
     orgUsers.push({
@@ -65,28 +65,28 @@ for (const invite of acceptedInvites) {
 
   newMemberships.push({
     orgId,
-    role,
+    role: role || "",
     permissions,
   });
 }
-  const orgUsers = JSON.parse(localStorage.getItem(`users`) || "[]");
-  const isAlreadyAdded = orgUsers.some((u: any) => u.id === newUser.id);
+  const orgUsers:User[] = JSON.parse(localStorage.getItem(`users`) || "[]");
+  const isAlreadyAdded:boolean = orgUsers.some((u: User) => u.id === newUser.id);
 
   if (isAlreadyAdded) {
-     const updatedUser = orgUsers.filter(
-    (i: any) => i.id !== newUser.id  
+     const updatedUser:User[] = orgUsers.filter(
+    (i: User) => i.id !== newUser.id  
   );
 
   updatedUser.push({
     ...newUser,
-    memberships: [...(newUser.memberships || []), ...newMemberships],
+    memberships: [...(newUser?.memberships || []), ...newMemberships],
   });
   localStorage.setItem(`users`, JSON.stringify(updatedUser));
   }
 
 
 // 3. Remove invites for this email
-const remainingInvites = invites.filter((invite: any) => invite.email !== userEmail);
+const remainingInvites:UserInvite[] = invites.filter((invite: UserInvite) => invite.email !== userEmail);
 localStorage.setItem("userInvites", JSON.stringify(remainingInvites));
 
  

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSuperAdminAuthStore } from "@/stores/admin-store/superAdminAuthStore";
 import { decryptPassword, encryptPassword } from "@/lib/auth";
+import { useSuperAdminAuthStore } from "@/stores/admin-store/superAdminAuthStore";
+import type { User } from "@/types";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SuperAdminLoginPage() {
   const router = useRouter();
@@ -26,20 +27,20 @@ export default function SuperAdminLoginPage() {
   useEffect(() => {
     const admins = JSON.parse(localStorage.getItem("super-admin") || "[]");
 
-    const exists = admins.find((u: any) => u.isSuperAdmin);
+    const exists = admins.find((u: User) => u.isSuperAdmin);
     if (!exists) {
       // Seed default super admin
         defaultAdmin.password =  encryptPassword(defaultAdmin.password);
       const updated = [...admins, defaultAdmin];
       localStorage.setItem("super-admin", JSON.stringify(updated));
     }
-  }, []);
+  });
 
   const handleLogin = () => {
     const users = JSON.parse(localStorage.getItem("super-admin") || "[]");
 
     const match = users.find(
-      (u: any) =>
+      (u: User) =>
         u.isSuperAdmin &&
         u.email === email &&
         decrypt(u.password) === password

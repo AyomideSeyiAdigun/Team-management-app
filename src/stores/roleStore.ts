@@ -1,11 +1,8 @@
 import { create } from "zustand";
+import { Role } from "../types";
 import { useAuthStore } from "./authStore";
 
-interface Role {
-  id: string;
-  name: string;
-  permissions: string[];
-}
+ 
 
 interface RoleStore {
   roles: Role[];
