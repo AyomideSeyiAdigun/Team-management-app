@@ -6,7 +6,7 @@ import { useAuditStore } from "@/stores/auditStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRoleStore } from "@/stores/roleStore";
 import { useUserStore } from "@/stores/userStore";
-import type { Role, User, UserInvite } from "@/types";
+import type { User, UserInvite } from "@/types";
  
 import { useEffect, useState } from "react";
 
@@ -14,7 +14,7 @@ export default function UsersPage() {
 
 
  
-  const [filter, setFilter] = useState("");
+  const [filter] = useState("");
   const [search, setSearch] = useState("");
     const { currentUser, activeOrg } = useAuthStore();
  
@@ -105,7 +105,7 @@ const filteredUsers :User[] = filter
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
- <select
+ {/* <select
   value={filter}
   onChange={(e) => setFilter(e.target.value)}
   className="border px-3 py-2 rounded dark:bg-gray-800"
@@ -116,7 +116,7 @@ const filteredUsers :User[] = filter
       {role.name}
     </option>
   ))}
-</select>
+</select> */}
         </div>
       </div>
 
