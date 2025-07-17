@@ -56,10 +56,11 @@ const handlePostSignup = (email: string) => {
     memberships: memberships,
   });
   localStorage.setItem(`users`, JSON.stringify(updatedUser));
+  localStorage.setItem(`user`, JSON.stringify( updatedUser[updatedUser.length - 1]));
   
   
 
-  
+ 
   
       // Remove invite
   const updatedInvites = userInvites.filter(

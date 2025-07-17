@@ -97,11 +97,15 @@ localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]))
       permissions: adminRole.permissions,
       orgName: form.name,
     };
-
+ 
+    
  const updatedUser = {
   ...user,
   memberships: [...user.memberships, newMembership],
 };
+
+ 
+
     // Save org
     const orgs = JSON.parse(localStorage.getItem("organizations") || "[]");
     localStorage.setItem("organizations", JSON.stringify([...orgs, {

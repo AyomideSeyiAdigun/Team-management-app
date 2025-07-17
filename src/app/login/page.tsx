@@ -27,6 +27,12 @@ const invites:UserInvite[] = JSON.parse(localStorage.getItem("userInvites") || "
  
 // 1. Filter invites for this user
 const acceptedInvites:UserInvite[]= invites.filter((invite: UserInvite) => invite.email === userEmail);
+if (acceptedInvites.length === 0) {
+    
+  return;
+  
+
+}
 
 // 2. Go through each invite (in case multiple orgs invited them)
 const newMemberships:Membership[] = [];

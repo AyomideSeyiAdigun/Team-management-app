@@ -86,7 +86,6 @@ const filteredUsers :User[] = filter
   ? combineUsers.filter((u:User) => u.role === filter)
   : combineUsers;
 
-  console.log(filteredUsers,'.....sjl');
   
 
   return (
