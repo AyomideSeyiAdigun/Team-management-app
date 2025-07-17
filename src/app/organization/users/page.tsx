@@ -14,14 +14,12 @@ export default function UsersPage() {
 
 
  
-  const [filter] = useState("");
   const [search, setSearch] = useState("");
     const { currentUser, activeOrg } = useAuthStore();
  
 const orgId = activeOrg?.orgId;
   const canManageUsers = currentUser?.memberships[0]?.permissions.includes("manage_users");
   const loadUsers = useUserStore((state) => state.loadUsers);
-     const roles = useRoleStore((state) => state.roles);
     const loadRoles = useRoleStore((state) => state.loadRoles);
     const [combineUsers, setCombineUsers] = useState< User[]>([]);
 useEffect(() => { 
@@ -82,10 +80,12 @@ const invite = {
   });
   };
 
-const filteredUsers :User[] = filter
-  ? combineUsers.filter((u:User) => u.role === filter)
-  : combineUsers;
+ 
 
+   const filteredUsers:User[] = combineUsers.filter((user) => {
+    const nameMatch = user.email.toLowerCase().includes(search.toLowerCase());
+    return nameMatch ;
+  });
   
 
   return (
@@ -105,18 +105,8 @@ const filteredUsers :User[] = filter
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
- {/* <select
-  value={filter}
-  onChange={(e) => setFilter(e.target.value)}
-  className="border px-3 py-2 rounded dark:bg-gray-800"
->
-  <option value="">All Roles</option>
-  {roles.map((role: Role) => (
-    <option key={role.id} value={role.name}>
-      {role.name}
-    </option>
-  ))}
-</select> */}
+ 
+ 
         </div>
       </div>
 
