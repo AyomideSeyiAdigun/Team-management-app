@@ -41,7 +41,7 @@ npm run dev
 Then open your browser and visit:
 
 ```
-http://localhost:3000
+http://localhost:3000/login
 ```
 
 You will be redirected to the user login page by default.
@@ -53,7 +53,7 @@ You will be redirected to the user login page by default.
 To access the **Super Admin panel**, go to:
 
 ```
-http://localhost:3000/admin/login
+http://localhost:3000/admin-login
 ```
 
 You can use this default login (created automatically on first load):
