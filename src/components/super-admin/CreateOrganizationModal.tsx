@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import { useState } from "react";
  
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,18 +20,39 @@ export default function CreateOrganizationModal({ onClose }: { onClose: () => vo
     const newOrg = { id: orgId, name, address, adminEmail: [adminEmail] };
     localStorage.setItem("organizations", JSON.stringify([...orgs, newOrg]));
 
+ 
+    // Step 1: Create roles
+const adminRole = {
+  id: "org_admin",
+  name: "Org Admin",
+   permissions: [
+        "view_users",
+        "manage_users",
+        "view_teams",
+        "manage_teams",
+        "view_roles",
+        "manage_roles",
+        "view_audit_trail",
+      ],
+};
+
+const supportRole = {
+  id: "support",
+  name: "Support",
+  permissions: ["view_teams", "view_roles", "view_users"],
+};
+
+// Save roles to localStorage
+
+
+localStorage.setItem(`roles_${orgId}`, JSON.stringify([adminRole, supportRole]));
+
     // Save invite
     const invites = JSON.parse(localStorage.getItem("userInvites") || "[]");
     invites.push({
-      email: adminEmail,
+      email: adminEmail.toLowerCase(),
       orgId,
-      role: "org_admin",
-      permissions: [
-        "view_users", "manage_users",
-        "view_teams", "manage_teams",
-        "view_roles", "manage_roles",
-        "view_audit_trail"
-      ]
+      role: "org_admin"
     });
     localStorage.setItem("userInvites", JSON.stringify(invites));
 
