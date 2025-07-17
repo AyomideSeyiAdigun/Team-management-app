@@ -35,6 +35,16 @@ export default function TeamsPage() {
   }, [orgId, loadTeams, loadUsers]);
 
   const handleCreate = () => {
+
+    if (!teamName.trim()) {
+      alert("Team name is required.");
+      return;
+    }
+
+    if (selectedMembers.length === 0) {
+      alert("At least one member must be selected.");
+      return;
+    }
     if (canManageTeams === false) {
       alert("You do not have permission to create teams.");
       return;
@@ -111,6 +121,8 @@ export default function TeamsPage() {
   };
 
   const handleDoubleClick = () => {
+    console.log("Double click detected");
+    
     if (showCreateModal) {
       setShowCreateModal(false);
     } else {
@@ -249,7 +261,7 @@ export default function TeamsPage() {
               </div>
               <div className="flex justify-end gap-3">
                 <button
-                  onClick={() => handleDoubleClick}
+                  onClick={handleDoubleClick}
                   className="text-sm px-3 py-1 rounded border"
                 >
                   Cancel
