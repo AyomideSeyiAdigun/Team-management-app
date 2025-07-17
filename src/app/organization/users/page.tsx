@@ -18,7 +18,7 @@ export default function UsersPage() {
     const { currentUser, activeOrg } = useAuthStore();
  
 const orgId = activeOrg?.orgId;
-  const canManageUsers = currentUser?.memberships[0]?.permissions.includes("manage_users");
+  const canManageUsers = activeOrg?.permissions.includes("manage_users");
   const loadUsers = useUserStore((state) => state.loadUsers);
     const loadRoles = useRoleStore((state) => state.loadRoles);
     const [combineUsers, setCombineUsers] = useState< User[]>([]);

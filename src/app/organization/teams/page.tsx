@@ -14,8 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 export default function TeamsPage() {
   const { activeOrg, currentUser } = useAuthStore();
   const orgId = activeOrg?.orgId;
-  const canManageTeams =
-    currentUser?.memberships[0]?.permissions.includes("manage_teams");
+  const canManageTeams =activeOrg?.permissions.includes("manage_teams");
   const loadTeams = useTeamStore((state) => state.loadTeams);
   const teams = useTeamStore((state) => state.teams);
   const loadUsers = useUserStore((state) => state.loadUsers);

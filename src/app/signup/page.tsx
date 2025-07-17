@@ -33,6 +33,8 @@ const handlePostSignup = (email: string) => {
 
       const { orgId, role } = matchedInvite;
 
+      
+
   const roles = JSON.parse(localStorage.getItem(`roles_${orgId}`) || "[]");
   const roleObj = roles.find((r: Role) => r.id === role);
 

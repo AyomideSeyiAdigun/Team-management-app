@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 export default function RolesPage() {
   const { currentUser, activeOrg } = useAuthStore();
   const orgId = activeOrg?.orgId;
-  const canManageRoles = currentUser?.memberships[0]?.permissions.includes("manage_roles");
+  const canManageRoles = activeOrg?.permissions.includes("manage_roles");
 
   // const [roles, setRoles] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
