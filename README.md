@@ -152,10 +152,4 @@ MIT © 2025 Ayomide Adigun
 
 ```
 
----
-
-Let me know if you’d like:
-- A PDF version
-- Sample screenshots
-- Vercel deployment setup
-```
+ 
